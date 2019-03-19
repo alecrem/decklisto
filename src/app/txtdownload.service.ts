@@ -10,9 +10,8 @@ export class TxtdowdnloadService {
   constructor(
     private http: HttpClient
   ) {
-    if (location.hostname == 'localhost' || location.hostname == '127.0.0.1') {
-      this.proxy = 'https://apps.alecrem.com/decklisto/mtggoldfish.php?url=';
-    }
+    // Get your own proxy. Mine only works for https://alecrem.github.io/decklisto/
+    this.proxy = 'https://apps.alecrem.com/decklisto/mtggoldfish.php?url=';
   }
 
   getDeck(url: string) {
