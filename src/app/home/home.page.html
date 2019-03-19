@@ -1,12 +1,18 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      Ionic Blank
+      Decklisto
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content padding>
-  The world is your oyster.
-  <p>If you get lost, the <a target="_blank" rel="noopener" href="https://ionicframework.com/docs/">docs</a> will be your guide.</p>
+  <ion-label position="stacked">MTGGoldfish decklist URL</ion-label>
+  <ion-input [(ngModel)]="decklisturl" placeholder="https://www.mtggoldfish.com/deck/..."></ion-input>
+  <ion-button (click)="fetch()">
+    <ion-icon name="cloud-download"></ion-icon>
+    &nbsp;Fetch
+  </ion-button>
+  <ion-textarea [(ngModel)]="localisedDecklist" readonly="true" rows="30">
+  </ion-textarea>
 </ion-content>
