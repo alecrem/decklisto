@@ -17,8 +17,8 @@ export class Decklist {
     return this._txtUrl;
   }
 
-  get localisedDecklist(): string {
-    return this._output.join('\n');
+  get localisedDecklist(): string[] {
+    return this._output;
   }
 
   constructor (

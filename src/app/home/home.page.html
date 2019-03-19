@@ -13,6 +13,9 @@
     <ion-icon name="cloud-download"></ion-icon>
     &nbsp;Fetch
   </ion-button>
-  <ion-textarea [(ngModel)]="localisedDecklist" readonly="true" rows="30">
-  </ion-textarea>
+  <p>
+    <span *ngFor="let item of localisedDecklist" >
+      {{ item }}<br>
+    </span>
+  </p>
 </ion-content>

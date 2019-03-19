@@ -37,8 +37,8 @@ export class HomePage {
     this.deck.fetch();
   }
 
-  get localisedDecklist(): string {
+  get localisedDecklist(): string[] {
     if(this.deck) return this.deck.localisedDecklist;
-    return '';
+    return [];
   }
 }
