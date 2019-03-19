@@ -15,7 +15,6 @@ export class TxtdowdnloadService {
   }
 
   getDeck(url: string) {
-    console.log("getDeck!");
     return this.http.get(this.proxy + url, { responseType: 'text' });
   }
 

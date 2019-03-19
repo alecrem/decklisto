@@ -6,6 +6,7 @@ export class Decklist {
   private _pageUrl: string;
   private _txtUrl: string;
   private _output: string[] = [];
+  private _parsedDeck: DecklistLine[] = [];
 
   get txtUrl(): string {
     if(this._txtUrl == null) {
@@ -40,42 +41,42 @@ export class Decklist {
     }
     this.txtDl.getDeck(this.txtUrl).subscribe((res: string) => {
       this.txtList = res;
-      console.log("Got the deck!");
-      console.log(res);
+      // console.log("Got the deck!");
+      // console.log(res);
       this.parse();
     });
   }
 
   async parse() {
-    for(const line of this.txtList.split('\n')) {
+    let lines = this.txtList.split('\n');
+    let sideboardAlready = false;
+    for(let i = 0; i < lines.length; i++) {
       let entry = new DecklistLine(this.scryf);
-      entry.init(line);
-      const onError = () => {
-        entry.cardnameJa = '';
-        console.log(entry.bilingualLine);
-        this._output.push(entry.bilingualLine);
-        if(this._output.length >= this.txtList.split('\n').length) {
-          console.log(this._output.join('\n'));
-        }
-      };
-      const onCompleted = (res) => {
-        if(res.hasOwnProperty('data')) {
-          if(res['data'][0]) {
-            const card = new ScryfallCard(res['data'][0]);
-            if (card.hasOwnProperty('printed_name')) {
-              entry.cardnameJa = card.printed_name;
-            } else if (card.hasOwnProperty('card_faces')) {
-              entry.cardnameJa = card.card_faces[0].printed_name;
-            }
-            console.log(entry.bilingualLine);
-            this._output.push(entry.bilingualLine);
-            if(this._output.length >= this.txtList.split('\n').length) {
-              console.log(this._output.join('\n'));
+      entry.init(lines[i], i, sideboardAlready);
+      if (!entry.quantity) {
+        sideboardAlready = true;
+      } else {
+        const onError = () => {
+          entry.cardnameJa = '';
+          this._parsedDeck.push(entry);
+          this._output[i]= entry.bilingualLine;
+        };
+        const onCompleted = (res) => {
+          if(res.hasOwnProperty('data')) {
+            if(res['data'][0]) {
+              const card = new ScryfallCard(res['data'][0]);
+              if (card.hasOwnProperty('printed_name')) {
+                entry.cardnameJa = card.printed_name;
+              } else if (card.hasOwnProperty('card_faces')) {
+                entry.cardnameJa = card.card_faces[0].printed_name;
+              }
+              this._parsedDeck.push(entry);
+              this._output[i]= entry.bilingualLine;
             }
           }
-        }
-      };
-      this.scryf.getCardLocalised(entry.cardnameEn, 'ja').subscribe(onCompleted, onError);
+        };
+        this.scryf.getCardLocalised(entry.cardnameEn, 'ja').subscribe(onCompleted, onError);
+      }
     }
   };
 
@@ -83,6 +84,8 @@ export class Decklist {
 
 export class DecklistLine {
   originalLine: string;
+  order: number;
+  sideboard: boolean = false;
   private _bilingualLine: string;
   private _quantity: number;
   private _cardnameEn: string;
@@ -123,8 +126,10 @@ export class DecklistLine {
     private scryf: ScryfallService,
   ) {}
 
-  init(line) {
-    this.originalLine = line;
+  init(originalLine, order, sideboard) {
+    this.originalLine = originalLine;
+    this.order = order;
+    this.sideboard = sideboard;
   }
 
 }
